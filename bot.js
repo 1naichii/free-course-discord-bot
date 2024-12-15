@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 const { Client, GatewayIntentBits } = require("discord.js");
-const token = "YOUR_DISCORD_BOT_TOKEN"; // Ganti dengan token bot Discord Anda
+const token = "MTMxNzU1NDc3NTEwMTAxNDE1Ng.GShWJi.equ-JPASqZKw4hSZail8dpM9vPMPv66ICuxOK8"; // Ganti dengan token bot Discord Anda
 
 // Membuat instance bot Discord
 const bot = new Client({
@@ -12,8 +12,8 @@ const bot = new Client({
 });
 
 // Channel ID dan Role ID untuk mention
-const channelId = "YOUR_CHANNEL_ID"; // ID channel yang diinginkan
-const roleId = "YOUR_ROLE_ID"; // ID role yang ingin disebutkan
+const channelId = "1314511842881568789"; // ID channel yang diinginkan
+const roleId = "1316106397724966992"; // ID role yang ingin disebutkan
 
 let lastArticleTimestamp = null; // Untuk menyimpan timestamp artikel terakhir yang sudah dikirim
 
