@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer");
-const { Client, GatewayIntentBits } = require("discord.js"); // Menggunakan GatewayIntentBits untuk intents
-const token =
-    "MTMxNzU1NDc3NTEwMTAxNDE1Ng.GShWJi.equ-JPASqZKw4hSZail8dpM9vPMPv66ICuxOK8"; // Ganti dengan token bot Discord Anda
+const { Client, GatewayIntentBits } = require("discord.js");
+const token = "YOUR_DISCORD_BOT_TOKEN"; // Ganti dengan token bot Discord Anda
 
 // Membuat instance bot Discord
 const bot = new Client({
@@ -13,8 +12,8 @@ const bot = new Client({
 });
 
 // Channel ID dan Role ID untuk mention
-const channelId = "1314511842881568789"; // ID channel yang diinginkan
-const roleId = "1316106397724966992"; // ID role yang ingin disebutkan
+const channelId = "YOUR_CHANNEL_ID"; // ID channel yang diinginkan
+const roleId = "YOUR_ROLE_ID"; // ID role yang ingin disebutkan
 
 let lastArticleTimestamp = null; // Untuk menyimpan timestamp artikel terakhir yang sudah dikirim
 
@@ -28,7 +27,7 @@ async function scrapeLatestCourses(limit = 5) {
 
     // Set User-Agent and add Timeout
     await page.setUserAgent(
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     );
 
     // Set request interception to block unnecessary requests
@@ -47,6 +46,9 @@ async function scrapeLatestCourses(limit = 5) {
             waitUntil: "domcontentloaded", // Wait for DOM content to load
             timeout: 90000, // Timeout 90 seconds for slow pages
         });
+
+        // Wait for the page to load dynamic content rendered by React (this selector can vary based on actual page structure)
+        await page.waitForSelector('.course-card', { timeout: 30000 }); // Adjust this selector based on actual page structure
     } catch (error) {
         console.log("Page failed to load:", error);
         await browser.close();
@@ -84,8 +86,8 @@ async function scrapeLatestCourses(limit = 5) {
 
     await browser.close();
 
-    // Limit the result to the top `limit` number of courses
-    return courses.slice(0, limit); // Returns only the top `limit` courses
+    // Limit the result to the top limit number of courses
+    return courses.slice(0, limit); // Returns only the top limit courses
 }
 
 // Fungsi untuk memeriksa artikel baru dan mengirimkan ke channel
