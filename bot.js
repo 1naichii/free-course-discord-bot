@@ -1,3 +1,6 @@
+// Load environment variables
+require('dotenv').config();
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const axios = require('axios');
 
@@ -10,23 +13,13 @@ const client = new Client({
     ]
 });
 
-// Your Discord bot token
-const TOKEN = 'YOUR_DISCORD_BOT_TOKEN';  // Replace with your actual bot token
-
-// The specific channel ID where the bot will listen for commands (replace with your actual command channel ID)
-const COMMAND_CHANNEL_ID = 'YOUR_COMMAND_CHANNEL_ID';  // Replace with the channel ID you want to receive commands in
-
-// The channel ID where the bot will send the course details (replace with your actual target channel ID)
-const TARGET_CHANNEL_ID = 'YOUR_TARGET_CHANNEL_ID';  // Replace with the channel ID you want to send messages to
-
-// The role ID to mention (replace with your actual role ID)
-const ROLE_ID = 'YOUR_ROLE_ID';  // Replace with the role ID you want to mention
-
-// Your Discord user ID (replace with your actual user ID)
-const USER_ID = 'YOUR_DISCORD_USER_ID';
-
-// Udemy API endpoint
-const API_URL = 'https://www.courspora.my.id/api/course';
+// Environment variables
+const TOKEN = process.env.DISCORD_BOT_TOKEN;
+const COMMAND_CHANNEL_ID = process.env.COMMAND_CHANNEL_ID;
+const TARGET_CHANNEL_ID = process.env.TARGET_CHANNEL_ID;
+const ROLE_ID = process.env.ROLE_ID;
+const USER_ID = process.env.USER_ID;
+const API_URL = process.env.API_URL;
 
 // Function to shorten a URL using TinyURL
 const shortenUrl = async (url) => {
@@ -66,14 +59,6 @@ const getLatestCourses = async (count) => {
         return message;
     } catch (error) {
         console.error('Error fetching courses:', error);
-
-        // // Construct the error message for the command channel
-        // const errorMessage = `<@409651686752256001> Failed to fetch courses. Please try again later.`;
-
-        // // Send the error message to the command channel
-        // sendLogToCommandChannel(errorMessage);
-
-        // Return null to indicate failure in fetching
         return null;
     }
 };
@@ -88,7 +73,7 @@ const sendLogToCommandChannel = async (message) => {
 
 // Function to send the message in chunks
 const sendMessageInChunks = async (channel, messageContent) => {
-    const maxLength = 2000;  // Corrected to 2000 characters (Discord's limit)
+    const maxLength = 2000; // Discord's character limit
     let startIndex = 0;
 
     // Split the message into chunks of 2000 characters or less
@@ -112,21 +97,18 @@ client.on('messageCreate', async (message) => {
         if (args[1] && !isNaN(args[1])) {
             const count = parseInt(args[1]);
             const coursesMessage = await getLatestCourses(count);
-            // Send the log to the command channel
+
             sendLogToCommandChannel(`Command received: !fc ${count} - Processing request.`);
+
             if (coursesMessage) {
-                // Send the courses message to the target channel
                 const targetChannel = await client.channels.fetch(TARGET_CHANNEL_ID);
                 if (targetChannel) {
-                    // Send the courses in chunks to avoid the 2000-character limit
                     sendMessageInChunks(targetChannel, `<@&${ROLE_ID}> ${coursesMessage}`);
-                    const successMessage = `<@${USER_ID}> ${count} courses send to <#${TARGET_CHANNEL_ID}>.`;
-                    sendLogToCommandChannel(successMessage);
+                    sendLogToCommandChannel(`<@${USER_ID}> ${count} courses sent to <#${TARGET_CHANNEL_ID}>.`);
                 } else {
-                    sendLogToCommandChannel("Target channel not found.");
+                    sendLogToCommandChannel('Target channel not found.');
                 }
             } else {
-                // Log failure in the command channel
                 sendLogToCommandChannel(`<@${USER_ID}> Failed to fetch courses. Please try again later.`);
             }
         } else {
